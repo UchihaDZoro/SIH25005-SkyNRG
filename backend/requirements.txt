@@ -1,0 +1,19 @@
+# Core FastAPI (using standard bundle which includes uvicorn)
+fastapi[standard]
+python-dotenv
+pydantic-settings
+python-multipart
+aiofiles
+
+# Database
+motor
+pymongo
+
+# AI Integration (optional - works without)
+google-generativeai
+
+# Image Processing (optional - using Pillow only for now)
+Pillow
+
+# Note: opencv-python removed due to compatibility issues
+# Can be added later if needed for advanced image processing

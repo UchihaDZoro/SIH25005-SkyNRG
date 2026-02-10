@@ -1,0 +1,233 @@
+import { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { FiMenu, FiX, FiChevronDown } from 'react-icons/fi';
+import { motion, AnimatePresence } from 'framer-motion';
+import LanguageSwitcher from '../LanguageSwitcher';
+
+const Navbar = () => {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState(null);
+  const [scrolled, setScrolled] = useState(false);
+  const location = useLocation();
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const isActivePath = (path) => {
+    return location.pathname === path;
+  };
+
+  const toggleDropdown = (name) => {
+    setOpenDropdown(openDropdown === name ? null : name);
+  };
+
+  const menuItems = [
+    { name: 'Home', path: '/' },
+    {
+      name: 'About',
+      dropdown: [
+        { name: 'About Us', path: '/about' },
+        { name: 'Rashtriya Gokul Mission', path: '/rgm' },
+      ]
+    },
+    {
+      name: 'Learn',
+      dropdown: [
+        { name: 'Breed Profiles', path: '/breeds' },
+        { name: 'Gallery', path: '/gallery' },
+      ]
+    },
+    {
+      name: 'Resources',
+      dropdown: [
+        { name: 'Documentation', path: '/docs' },
+        { name: 'API Reference', path: '/api' },
+        { name: 'FAQs', path: '/faq' },
+      ]
+    },
+    { name: 'Archive', path: '/archive' },
+    { name: 'Contact', path: '/contact' },
+  ];
+
+  return (
+    <motion.nav
+      initial={{ y: -100 }}
+      animate={{ y: 0 }}
+      transition={{ duration: 0.5 }}
+      className={`fixed w-full z-50 top-0 transition-all duration-300 ${
+        scrolled
+          ? 'bg-white/80 backdrop-blur-md shadow-md border-b border-gray-200/50 py-2'
+          : 'bg-white border-b border-transparent py-4'
+      }`}
+    >
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="flex justify-between items-center">
+          
+          {/* Logo */}
+          <Link to="/" className="flex flex-col leading-none group relative">
+            <span className="text-2xl font-light text-black tracking-tight group-hover:text-orange-600 transition-colors duration-300">
+              LIVESTOCK
+            </span>
+            <div className="flex items-center gap-2 mt-1">
+              <motion.div 
+                className="w-6 h-px bg-orange-500"
+                animate={{ width: scrolled ? 24 : 40 }}
+              />
+              <span className="text-[10px] font-medium text-orange-600 tracking-[0.3em] uppercase">
+                Classification
+              </span>
+            </div>
+          </Link>
+
+          {/* Desktop Menu */}
+          <div className="hidden lg:flex items-center space-x-1">
+            {menuItems.map((item, index) => (
+              <div key={index} className="relative group">
+                {item.dropdown ? (
+                  <div
+                    onMouseEnter={() => setOpenDropdown(item.name)}
+                    onMouseLeave={() => setOpenDropdown(null)}
+                    className="relative"
+                  >
+                    <button className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-black transition-colors flex items-center gap-1 group-hover:text-orange-600">
+                      {item.name}
+                      <FiChevronDown className={`w-4 h-4 transition-transform duration-200 ${openDropdown === item.name ? 'rotate-180' : ''}`} />
+                    </button>
+
+                    {/* Dropdown */}
+                    <AnimatePresence>
+                      {openDropdown === item.name && (
+                        <motion.div
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: 10 }}
+                          transition={{ duration: 0.2 }}
+                          className="absolute left-0 mt-0 w-56 bg-white/90 backdrop-blur-xl border border-gray-100 shadow-xl rounded-xl overflow-hidden"
+                        >
+                          <div className="py-2">
+                            {item.dropdown.map((subItem, subIndex) => (
+                              <Link
+                                key={subIndex}
+                                to={subItem.path}
+                                className={`block px-4 py-2.5 text-sm transition-all font-medium hover:bg-orange-50 hover:text-orange-600 ${
+                                  isActivePath(subItem.path)
+                                    ? 'text-orange-600 bg-orange-50'
+                                    : 'text-gray-600'
+                                }`}
+                              >
+                                {subItem.name}
+                              </Link>
+                            ))}
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                ) : (
+                  <Link
+                    to={item.path}
+                    className="relative px-4 py-2 text-sm font-medium text-gray-600 hover:text-black transition-colors group"
+                  >
+                    {item.name}
+                    {isActivePath(item.path) && (
+                      <motion.div
+                        layoutId="navbar-underline"
+                        className="absolute bottom-0 left-0 right-0 h-0.5 bg-orange-500"
+                        initial={false}
+                        transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                      />
+                    )}
+          >
+            {isMobileMenuOpen ? <FiX className="w-6 h-6" /> : <FiMenu className="w-6 h-6" />}
+          </button>
+        </div>
+      </div>
+
+      {/* Mobile Menu */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="lg:hidden bg-white/95 backdrop-blur-xl border-t border-gray-100 overflow-hidden"
+          >
+            <div className="max-w-7xl mx-auto px-6 py-6 space-y-4">
+              {menuItems.map((item, index) => (
+                <div key={index}>
+                  {item.dropdown ? (
+                    <div>
+                      <button
+                        onClick={() => toggleDropdown(item.name)}
+                        className="w-full flex justify-between items-center px-4 py-3 text-sm font-medium text-gray-800 hover:text-orange-600 hover:bg-orange-50 rounded-lg transition-all"
+                      >
+                        {item.name}
+                        <FiChevronDown
+                          className={`w-4 h-4 transition-transform duration-300 ${
+                            openDropdown === item.name ? 'rotate-180' : ''
+                          }`}
+                        />
+                      </button>
+                      <AnimatePresence>
+                        {openDropdown === item.name && (
+                          <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
+                            className="overflow-hidden"
+                          >
+                            <div className="mt-1 ml-4 space-y-1 border-l-2 border-orange-100 pl-4">
+                              {item.dropdown.map((subItem, subIndex) => (
+                                <Link
+                                  key={subIndex}
+                                  to={subItem.path}
+                                  onClick={() => setIsMobileMenuOpen(false)}
+                                  className="block px-4 py-2 text-sm text-gray-600 hover:text-orange-600 transition-colors font-medium"
+                                >
+                                  {subItem.name}
+                                </Link>
+                              ))}
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  ) : (
+                    <Link
+                      to={item.path}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className={`block px-4 py-3 text-sm font-medium rounded-lg transition-all ${
+                        isActivePath(item.path)
+                          ? 'text-orange-600 bg-orange-50'
+                          : 'text-gray-800 hover:text-orange-600 hover:bg-orange-50'
+                      }`}
+                    >
+                      {item.name}
+                    </Link>
+                  )}
+                </div>
+              ))}
+              {/* Language Selector - Mobile */}
+              <LanguageSwitcher />
+              
+              <Link
+                to="/classify"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="block mt-6 px-6 py-4 bg-black text-white text-xs font-bold text-center tracking-[0.2em] uppercase hover:bg-orange-600 transition-colors shadow-lg"
+              >
+                CLASSIFY NOW
+              </Link>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.nav>
+  );
+};
+
+export default Navbar;

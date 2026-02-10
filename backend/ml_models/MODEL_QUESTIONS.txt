@@ -1,0 +1,52 @@
+"""
+IMPORTANT: Questions for Your Team Member About cattle_model.pth
+
+The cattle_model.pth file contains raw model weights (state_dict) but we need:
+
+1. **Model Architecture**: What is the exact model architecture?
+   - Is it YOLO11m? YOLO11n? YOLOv8? Custom model?
+   - What's the class count (number of views)?
+   
+2. **Training Details**:
+   - Was it trained with ultralytics? Or custom PyTorch code?
+   - What framework was used for training?
+   
+3. **Class Names**: What are the class names/view names?
+   - Example: {0: 'front', 1: 'rear', 2: 'side', 3: 'top', 4: 'bottom'}
+   - We need the EXACT mapping from class index to view name
+   
+4. **Input Size**: What image size does the model expect?
+   - 640x640? 224x224? Other?
+
+SOLUTIONS:
+
+Option A: If trained with Ultralytics YOLO
+-----------------------------------------
+They should provide the .pt file from the runs/classify/train/weights/best.pt
+That file will work directly with our code.
+
+Option B: If it's a custom model
+---------------------------------
+We need the model architecture code to load the weights properly.
+
+Option C: Quick Test (Try this first!)
+---------------------------------------
+If they used YOLO11m-cls, try this:
+
+from ultralytics import YOLO
+
+# Load pretrained YOLO11m classifier
+model = YOLO('yolo11m-cls.pt')  # Downloads if not exists
+
+# Load your custom weights
+model.model.load_state_dict(torch.load('cattle_model.pth'))
+
+# Save as proper .pt file
+model.save('cattle_model_converted.pt')
+
+But we need to know:
+- Exact YOLO version (yolo11m-cls, yolo11n-cls, yolov8m-cls, etc.)
+- Number of classes in their model
+
+Please ask your team member for these details!
+"""

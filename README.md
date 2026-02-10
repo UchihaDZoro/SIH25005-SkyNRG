@@ -217,20 +217,12 @@ npm run preview      # Preview production build
 
 ```bash
 uvicorn app.main:app --reload   # Development server with hot reload
-python -m pytest                # Run tests (if available)
+pyt0hon -m pytest                # Run tests (if available)
 ```
 
-## 🤝 Contributing
+## 👥 Contributors
 
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-## 📄 License
-
-MIT License - Educational/Government Use
-
-## 👥 Authors
-
-SIH 2025 Team
+Nancy Srivastava | Pathan Gulamgaush | Swasti Mishra | Rabia Basriya | Sriyukthika | Kunal Verma
 
 ## 🙏 Acknowledgments
 
